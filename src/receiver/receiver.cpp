@@ -60,7 +60,9 @@ void ReceiverNode::handle_message()
 
   // 바이너리 데이터를 구조체로 해석
   RobotData data;
-  std::memcpy(&data, buffer, sizeof(RobotData));
+  std::memcpy(&data, buffer, sizeof(RobotData)); //frame_id
+
+  // data_by_id[data.id] = data;
 
   // 출력
   RCLCPP_INFO(this->get_logger(), "--------------------------------------------");
