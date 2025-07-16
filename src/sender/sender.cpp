@@ -5,10 +5,10 @@ SenderNode::SenderNode() : Node("sender_node")
   socket = new QUdpSocket();
 
   imu_sub_ = this->create_subscription<humanoid_interfaces::msg::ImuMsg>(
-    "Imu", rclcpp::QoS(rclcpp::KeepLast(10)).best_effort(), 
-    std::bind(&SenderNode::imuCallback, this, std::placeholders::_1));
+      "Imu", rclcpp::QoS(rclcpp::KeepLast(10)).best_effort(),
+      std::bind(&SenderNode::imuCallback, this, std::placeholders::_1));
   localization_sub_ = this->create_subscription<humanoid_interfaces::msg::Robocuplocalization25>(
-    "RoboCupLocalization25", 10, std::bind(&SenderNode::localizationCallback, this, std::placeholders::_1));  
+      "RoboCupLocalization25", 10, std::bind(&SenderNode::localizationCallback, this, std::placeholders::_1));
 }
 
 SenderNode::~SenderNode()
@@ -22,7 +22,7 @@ void SenderNode::imuCallback(const humanoid_interfaces::msg::ImuMsg::SharedPtr m
   pitch = msg->pitch;
   yaw = msg->yaw;
 
-  sendMessage("192.168.0.203", 3333);
+  sendMessage("172.100.5.71", 2222);
 }
 
 void SenderNode::localizationCallback(const humanoid_interfaces::msg::Robocuplocalization25::SharedPtr msg)
@@ -32,26 +32,28 @@ void SenderNode::localizationCallback(const humanoid_interfaces::msg::Robocuploc
   ball_x = msg->ball_x;
   ball_y = msg->ball_y;
 
-  sendMessage("192.168.0.203", 3333);
+  sendMessage("172.100.5.71", 2222);
 }
 
 void SenderNode::sendMessage(const QString &receiverIP, quint16 receiverPort)
 {
-  QString message = QString("roll=%1,pitch=%2,yaw=%3,robot_x=%4,robot_y=%5,ball_x=%6,ball_y=%7")
-                      .arg(roll, 0, 'f', 2)
-                      .arg(pitch, 0, 'f', 2)
-                      .arg(yaw, 0, 'f', 2)
-                      .arg(robot_x, 0, 'f', 2)
-                      .arg(robot_y, 0, 'f', 2)
-                      .arg(ball_x, 0, 'f', 2)
-                      .arg(ball_y, 0, 'f', 2);
+  RobotData data;
+  data.id = 1; // 로봇 ID
+  data.yaw = yaw;
+  data.roll = roll;
+  data.pitch = pitch;
+  data.robot_x = robot_x;
+  data.robot_y = robot_y;
+  data.ball_x = ball_x;
+  data.ball_y = ball_y;
 
-  QByteArray data = message.toUtf8();
-  QHostAddress address(receiverIP);
-  socket->writeDatagram(data, address, receiverPort);
+  RCLCPP_INFO(this->get_logger(), "roll: %.2f, pitch: %.2f, yaw: %.2f, robot_x: %.2f, robot_y: %.2f, ball_x: %.2f, ball_y: %.2f",
+              data.roll, data.pitch, data.yaw, data.robot_x, data.robot_y, data.ball_x, data.ball_y);
 
-  qDebug() << "Message sent to" << receiverIP << ":" << receiverPort;
-  qDebug() << "Sent data:" << message;
+  QByteArray buffer(reinterpret_cast<const char *>(&data), sizeof(RobotData));
+  socket->writeDatagram(buffer, QHostAddress(receiverIP), receiverPort);
+
+  qDebug() << "send";
 }
 
 int main(int argc, char *argv[])

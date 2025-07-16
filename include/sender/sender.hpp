@@ -9,6 +9,18 @@
 #include "humanoid_interfaces/msg/imu_msg.hpp"
 #include "humanoid_interfaces/msg/robocuplocalization25.hpp"
 
+struct RobotData
+{
+  int id;
+  double yaw;
+  double roll;
+  double pitch;
+  double robot_x;
+  double robot_y;
+  double ball_x;
+  double ball_y;
+};
+
 class SenderNode : public rclcpp::Node
 {
 public:
