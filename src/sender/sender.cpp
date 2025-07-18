@@ -19,6 +19,9 @@ SenderNode::SenderNode() : Node("sender_node")
   robot1sender_sub_ = this->create_subscription<humanoid_interfaces::msg::Robot1senderMsg>(
       "/robot1sender", rclcpp::QoS(rclcpp::KeepLast(10)).best_effort(),
       std::bind(&SenderNode::robot1senderCallback, this, std::placeholders::_1));
+  robot2sender_sub_ = this->create_subscription<humanoid_interfaces::msg::Robot2senderMsg>(
+      "/robot2sender", rclcpp::QoS(rclcpp::KeepLast(10)).best_effort(),
+      std::bind(&SenderNode::robot2senderCallback, this, std::placeholders::_1));
   //
   // ============================================================
 }
@@ -74,13 +77,13 @@ SenderNode::~SenderNode()
 
 // master pc 전용
 // ============================================================
-void SenderNode::sendMessage_master1(const QString &receiverIP, quint16 receiverPort)
+void SenderNode::sendMessage_master(const QString &receiverIP, quint16 receiverPort, int yaw_set)
 {
-  master1 msg;
+  master msg;
   msg.set = yaw_set;
   RCLCPP_INFO(this->get_logger(), "%d", msg.set);
 
-  QByteArray buffer(reinterpret_cast<const char *>(&msg), sizeof(master1));
+  QByteArray buffer(reinterpret_cast<const char *>(&msg), sizeof(master));
   socket->writeDatagram(buffer, QHostAddress(receiverIP), receiverPort);
 
   qDebug() << "send";
@@ -89,11 +92,20 @@ void SenderNode::sendMessage_master1(const QString &receiverIP, quint16 receiver
 void SenderNode::robot1senderCallback(const humanoid_interfaces::msg::Robot1senderMsg::SharedPtr msg)
 {
   // master pc 전용 메시지 처리
-  yaw_set = msg->set;
+  int yaw_set1 = msg->set;
 
-  RCLCPP_INFO(this->get_logger(), "Received set value: %d", yaw_set);
+  RCLCPP_INFO(this->get_logger(), "Received set value: %d", yaw_set1);
 
-  sendMessage_master1("172.100.1.161", 2222);
+  sendMessage_master("172.100.1.161", 2222, yaw_set1);
+}
+void SenderNode::robot2senderCallback(const humanoid_interfaces::msg::Robot2senderMsg::SharedPtr msg)
+{
+  // master pc 전용 메시지 처리
+  int yaw_set2 = msg->set;
+
+  RCLCPP_INFO(this->get_logger(), "Received set value: %d", yaw_set2);
+
+  sendMessage_master("172.100.1.161", 2222, yaw_set2);
 }
 //
 // ============================================================

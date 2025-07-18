@@ -5,6 +5,7 @@ ReceiverNode::ReceiverNode() : Node("receiver_node")
   // master pc 전용
   // ============================================================
   robot1receiver_publisher_ = this->create_publisher<humanoid_interfaces::msg::Robot1receiverMsg>("/robot1receiver", 10);
+  robot2receiver_publisher_ = this->create_publisher<humanoid_interfaces::msg::Robot2receiverMsg>("/robot2receiver", 10);
   //
   // =============================================================
 
@@ -113,6 +114,20 @@ void ReceiverNode::handle_message()
     msg.ball_y = data.ball_y;
 
     robot1receiver_publisher_->publish(msg);
+  }
+  if (data.id == 2)
+  {
+    humanoid_interfaces::msg::Robot2receiverMsg msg;
+    msg.id = data.id;
+    msg.yaw = data.yaw;
+    msg.roll = data.roll;
+    msg.pitch = data.pitch;
+    msg.robot_x = data.robot_x;
+    msg.robot_y = data.robot_y;
+    msg.ball_x = data.ball_x;
+    msg.ball_y = data.ball_y;
+
+    robot2receiver_publisher_->publish(msg);
   }
 }
 //

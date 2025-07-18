@@ -28,9 +28,10 @@
 // master pc 전용
 // ============================================================
 #include "humanoid_interfaces/msg/robot1sender_msg.hpp"
+#include "humanoid_interfaces/msg/robot2sender_msg.hpp"
 
 // master pc 전용
-struct master1
+struct master
 {
   int set;
 };
@@ -71,10 +72,11 @@ private:
 
   // master pc 전용
   // ============================================================
-  int yaw_set = 0;
   rclcpp::Subscription<humanoid_interfaces::msg::Robot1senderMsg>::SharedPtr robot1sender_sub_;
+  rclcpp::Subscription<humanoid_interfaces::msg::Robot2senderMsg>::SharedPtr robot2sender_sub_;
   void robot1senderCallback(const humanoid_interfaces::msg::Robot1senderMsg::SharedPtr msg);
-  void sendMessage_master1(const QString &receiverIP, quint16 receiverPort);
+  void robot2senderCallback(const humanoid_interfaces::msg::Robot2senderMsg::SharedPtr msg);
+  void sendMessage_master(const QString &receiverIP, quint16 receiverPort, int yaw_set);
   //
   // ============================================================
 };
