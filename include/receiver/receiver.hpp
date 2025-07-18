@@ -15,6 +15,8 @@
 // ============================================================
 #include <humanoid_interfaces/msg/robot1receiver_msg.hpp>
 #include <humanoid_interfaces/msg/robot2receiver_msg.hpp>
+#include <humanoid_interfaces/msg/robot3receiver_msg.hpp>
+#include <humanoid_interfaces/msg/robot4receiver_msg.hpp>
 //
 
 // master pc 전용
@@ -57,6 +59,8 @@ private:
   // ============================================================
   rclcpp::Publisher<humanoid_interfaces::msg::Robot1receiverMsg>::SharedPtr robot1receiver_publisher_;
   rclcpp::Publisher<humanoid_interfaces::msg::Robot2receiverMsg>::SharedPtr robot2receiver_publisher_;
+  rclcpp::Publisher<humanoid_interfaces::msg::Robot3receiverMsg>::SharedPtr robot3receiver_publisher_;
+  rclcpp::Publisher<humanoid_interfaces::msg::Robot4receiverMsg>::SharedPtr robot4receiver_publisher_;
   rclcpp::TimerBase::SharedPtr timer_;
   void handle_message();
   //

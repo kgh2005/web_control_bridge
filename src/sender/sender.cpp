@@ -19,9 +19,18 @@ SenderNode::SenderNode() : Node("sender_node")
   robot1sender_sub_ = this->create_subscription<humanoid_interfaces::msg::Robot1senderMsg>(
       "/robot1sender", rclcpp::QoS(rclcpp::KeepLast(10)).best_effort(),
       std::bind(&SenderNode::robot1senderCallback, this, std::placeholders::_1));
+
   robot2sender_sub_ = this->create_subscription<humanoid_interfaces::msg::Robot2senderMsg>(
       "/robot2sender", rclcpp::QoS(rclcpp::KeepLast(10)).best_effort(),
       std::bind(&SenderNode::robot2senderCallback, this, std::placeholders::_1));
+
+  robot3sender_sub_ = this->create_subscription<humanoid_interfaces::msg::Robot3senderMsg>(
+      "/robot3sender", rclcpp::QoS(rclcpp::KeepLast(10)).best_effort(),
+      std::bind(&SenderNode::robot3senderCallback, this, std::placeholders::_1));
+
+  robot4sender_sub_ = this->create_subscription<humanoid_interfaces::msg::Robot4senderMsg>(
+      "/robot4sender", rclcpp::QoS(rclcpp::KeepLast(10)).best_effort(),
+      std::bind(&SenderNode::robot4senderCallback, this, std::placeholders::_1));
   //
   // ============================================================
 }
@@ -106,6 +115,24 @@ void SenderNode::robot2senderCallback(const humanoid_interfaces::msg::Robot2send
   RCLCPP_INFO(this->get_logger(), "Received set value: %d", yaw_set2);
 
   sendMessage_master("172.100.1.161", 2222, yaw_set2);
+}
+void SenderNode::robot3senderCallback(const humanoid_interfaces::msg::Robot3senderMsg::SharedPtr msg)
+{
+  // master pc 전용 메시지 처리
+  int yaw_set3 = msg->set;
+
+  RCLCPP_INFO(this->get_logger(), "Received set value: %d", yaw_set3);
+
+  sendMessage_master("172.100.1.161", 2222, yaw_set3);
+}
+void SenderNode::robot4senderCallback(const humanoid_interfaces::msg::Robot4senderMsg::SharedPtr msg)
+{
+  // master pc 전용 메시지 처리
+  int yaw_set4 = msg->set;
+
+  RCLCPP_INFO(this->get_logger(), "Received set value: %d", yaw_set4);
+
+  sendMessage_master("172.100.1.161", 2222, yaw_set4);
 }
 //
 // ============================================================
