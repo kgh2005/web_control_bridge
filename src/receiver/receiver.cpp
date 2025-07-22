@@ -115,6 +115,9 @@ void ReceiverNode::handle_message()
     msg.robot_y = data.robot_y;
     msg.ball_x = data.ball_x;
     msg.ball_y = data.ball_y;
+    msg.x = data.ik_x;
+    msg.y = data.ik_y;
+    msg.ball_flag = data.ball_flag;
 
     robot1receiver_publisher_->publish(msg);
   }
@@ -129,6 +132,9 @@ void ReceiverNode::handle_message()
     msg.robot_y = data.robot_y;
     msg.ball_x = data.ball_x;
     msg.ball_y = data.ball_y;
+    msg.x = data.ik_x;
+    msg.y = data.ik_y;
+    msg.ball_flag = data.ball_flag;
 
     robot2receiver_publisher_->publish(msg);
   }
@@ -143,6 +149,9 @@ void ReceiverNode::handle_message()
     msg.robot_y = data.robot_y;
     msg.ball_x = data.ball_x;
     msg.ball_y = data.ball_y;
+    msg.x = data.ik_x;
+    msg.y = data.ik_y;
+    msg.ball_flag = data.ball_flag;
 
     robot3receiver_publisher_->publish(msg);
   }
@@ -157,6 +166,9 @@ void ReceiverNode::handle_message()
     msg.robot_y = data.robot_y;
     msg.ball_x = data.ball_x;
     msg.ball_y = data.ball_y;
+    msg.x = data.ik_x;
+    msg.y = data.ik_y;
+    msg.ball_flag = data.ball_flag;
 
     robot4receiver_publisher_->publish(msg);
   }

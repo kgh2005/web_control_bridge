@@ -11,6 +11,10 @@ SenderNode::SenderNode() : Node("sender_node")
   //     std::bind(&SenderNode::imuCallback, this, std::placeholders::_1));
   // localization_sub_ = this->create_subscription<humanoid_interfaces::msg::Robocuplocalization25>(
   //     "/localization", 10, std::bind(&SenderNode::localizationCallback, this, std::placeholders::_1));
+  // ik_sub_ = this->create_subscription<humanoid_interfaces::msg::IkCoordMsg>(
+  //     "/ikcoordinate", 10, std::bind(&SenderNode::ikCallback, this, std::placeholders::_1));
+  // vision_sub_ = this->create_subscription<humanoid_interfaces::msg::Robocupvision25>(
+  //     "/vision", 100, std::bind(&SenderNode::visionCallback, this, std::placeholders::_1));
   //
   // ============================================================
 
@@ -40,13 +44,27 @@ SenderNode::~SenderNode()
   delete socket;
 }
 
-//NUC 전용
-// ===========================================================
-// void SenderNode::imuCallback(const humanoid_interfaces::msg::ImuMsg::SharedPtr msg)
+// NUC 전용
+//  ===========================================================
+// void SenderNode::visionCallback(const humanoid_interfaces::msg::Robocupvision25::SharedPtr msg)
 // {
-//   roll = msg->roll;
-//   pitch = msg->pitch;
-//   yaw = msg->yaw;
+//   if (msg->ball_cam_x != 0) ball_flag = 1;
+//   sendMessage("172.100.5.71", 2222);
+// }
+//
+// void SenderNode::ikCallback(const humanoid_interfaces::msg::IkCoordMsg::SharedPtr msg)
+// {
+//   ikX = msg->x;
+//   ikY = msg->y;
+
+//   sendMessage("172.100.5.71", 2222);
+// }
+//
+//  void SenderNode::imuCallback(const humanoid_interfaces::msg::ImuMsg::SharedPtr msg)
+//  {
+//    roll = msg->roll;
+//    pitch = msg->pitch;
+//    yaw = msg->yaw;
 
 //   sendMessage("172.100.5.71", 2222);
 // }
@@ -72,6 +90,9 @@ SenderNode::~SenderNode()
 //   data.robot_y = robot_y;
 //   data.ball_x = ball_x;
 //   data.ball_y = ball_y;
+//   data.ik_x = ikX;
+//   data.ik_y = ikY;
+//   data.ball_flag = ball_flag;
 
 //   RCLCPP_INFO(this->get_logger(), "roll: %.2f, pitch: %.2f, yaw: %.2f, robot_x: %.2f, robot_y: %.2f, ball_x: %.2f, ball_y: %.2f",
 //               data.roll, data.pitch, data.yaw, data.robot_x, data.robot_y, data.ball_x, data.ball_y);
@@ -80,6 +101,7 @@ SenderNode::~SenderNode()
 //   socket->writeDatagram(buffer, QHostAddress(receiverIP), receiverPort);
 
 //   qDebug() << "send";
+//   ball_flag = 0;
 // }
 //
 // ============================================================

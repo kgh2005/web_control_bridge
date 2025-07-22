@@ -30,6 +30,9 @@ struct RobotData
   double robot_y;
   double ball_x;
   double ball_y;
+  int ik_x;
+  int ik_y;
+  int ball_flag;
 };
 //
 // ===============================================================

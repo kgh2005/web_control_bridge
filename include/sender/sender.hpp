@@ -10,6 +10,7 @@
 // ============================================================
 // #include "humanoid_interfaces/msg/imu_msg.hpp"
 // #include "humanoid_interfaces/msg/robocuplocalization25.hpp"
+// #include "humanoid_interfaces/msg/ik_coord_msg.hpp"
 
 // struct RobotData
 // {
@@ -21,6 +22,9 @@
 //   double robot_y;
 //   double ball_x;
 //   double ball_y;
+//   int ik_x;
+//   int ik_y;
+//   int ball_flag;
 // };
 //
 // ============================================================
@@ -57,6 +61,10 @@ private:
   // double robot_y = 0.0;
   // double ball_x = 0.0;
   // double ball_y = 0.0;
+  // int ikX = 0;
+  // int ikY = 0;
+  // int ball_flag = 0;
+
   //
   // ============================================================
 
@@ -66,6 +74,10 @@ private:
   // ===========================================================
   // rclcpp::Subscription<humanoid_interfaces::msg::ImuMsg>::SharedPtr imu_sub_;
   // rclcpp::Subscription<humanoid_interfaces::msg::Robocuplocalization25>::SharedPtr localization_sub_;
+  // rclcpp::Subscription<humanoid_interfaces::msg::IkCoordMsg>::SharedPtr ik_sub_;
+  // rclcpp::Subscription<humanoid_interfaces::msg::Robocupvision25>::SharedPtr vision_sub_;
+  // void visionCallback(const humanoid_interfaces::msg::Robocupvision25::SharedPtr msg);
+  // void ikCallback(const humanoid_interfaces::msg::IkCoordMsg::SharedPtr msg);
   // void sendMessage(const QString &receiverIP, quint16 receiverPort);
   // void imuCallback(const humanoid_interfaces::msg::ImuMsg::SharedPtr msg);
   // void localizationCallback(const humanoid_interfaces::msg::Robocuplocalization25::SharedPtr msg);
