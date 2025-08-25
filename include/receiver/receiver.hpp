@@ -13,10 +13,10 @@
 
 // master pc 전용
 // ============================================================
-#include <humanoid_interfaces/msg/robot1receiver_msg.hpp>
-#include <humanoid_interfaces/msg/robot2receiver_msg.hpp>
-#include <humanoid_interfaces/msg/robot3receiver_msg.hpp>
-#include <humanoid_interfaces/msg/robot4receiver_msg.hpp>
+#include <web_control_bridge/msg/robot1receiver_msg.hpp>
+#include <web_control_bridge/msg/robot2receiver_msg.hpp>
+#include <web_control_bridge/msg/robot3receiver_msg.hpp>
+#include <web_control_bridge/msg/robot4receiver_msg.hpp>
 //
 
 // master pc 전용
@@ -40,7 +40,7 @@ struct RobotData
 
 // NUC 전용
 // ============================================================
-// #include <humanoid_interfaces/msg/imuflag_msg.hpp>
+// #include <web_control_bridge/msg/imuflag_msg.hpp>
 
 // struct nuc
 // {
@@ -60,10 +60,10 @@ private:
 
   // master pc 전용
   // ============================================================
-  rclcpp::Publisher<humanoid_interfaces::msg::Robot1receiverMsg>::SharedPtr robot1receiver_publisher_;
-  rclcpp::Publisher<humanoid_interfaces::msg::Robot2receiverMsg>::SharedPtr robot2receiver_publisher_;
-  rclcpp::Publisher<humanoid_interfaces::msg::Robot3receiverMsg>::SharedPtr robot3receiver_publisher_;
-  rclcpp::Publisher<humanoid_interfaces::msg::Robot4receiverMsg>::SharedPtr robot4receiver_publisher_;
+  rclcpp::Publisher<web_control_bridge::msg::Robot1receiverMsg>::SharedPtr robot1receiver_publisher_;
+  rclcpp::Publisher<web_control_bridge::msg::Robot2receiverMsg>::SharedPtr robot2receiver_publisher_;
+  rclcpp::Publisher<web_control_bridge::msg::Robot3receiverMsg>::SharedPtr robot3receiver_publisher_;
+  rclcpp::Publisher<web_control_bridge::msg::Robot4receiverMsg>::SharedPtr robot4receiver_publisher_;
   rclcpp::TimerBase::SharedPtr timer_;
   void handle_message();
   //
@@ -71,7 +71,7 @@ private:
 
   // NUC 전용
   // ============================================================
-  // rclcpp::Publisher<humanoid_interfaces::msg::ImuflagMsg>::SharedPtr imuflag_publisher_;
+  // rclcpp::Publisher<web_control_bridge::msg::ImuflagMsg>::SharedPtr imuflag_publisher_;
   // rclcpp::TimerBase::SharedPtr timer_nuc_;
   // void handle_nuc_message();
   //

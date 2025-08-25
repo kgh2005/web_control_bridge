@@ -4,16 +4,16 @@ ReceiverNode::ReceiverNode() : Node("receiver_node")
 {
   // master pc 전용
   // ============================================================
-  robot1receiver_publisher_ = this->create_publisher<humanoid_interfaces::msg::Robot1receiverMsg>("/robot1receiver", 10);
-  robot2receiver_publisher_ = this->create_publisher<humanoid_interfaces::msg::Robot2receiverMsg>("/robot2receiver", 10);
-  robot3receiver_publisher_ = this->create_publisher<humanoid_interfaces::msg::Robot3receiverMsg>("/robot3receiver", 10);
-  robot4receiver_publisher_ = this->create_publisher<humanoid_interfaces::msg::Robot4receiverMsg>("/robot4receiver", 10);
+  robot1receiver_publisher_ = this->create_publisher<web_control_bridge::msg::Robot1receiverMsg>("/robot1receiver", 10);
+  robot2receiver_publisher_ = this->create_publisher<web_control_bridge::msg::Robot2receiverMsg>("/robot2receiver", 10);
+  robot3receiver_publisher_ = this->create_publisher<web_control_bridge::msg::Robot3receiverMsg>("/robot3receiver", 10);
+  robot4receiver_publisher_ = this->create_publisher<web_control_bridge::msg::Robot4receiverMsg>("/robot4receiver", 10);
   //
   // =============================================================
 
   // NUC 전용
   // ============================================================
-  // imuflag_publisher_ = this->create_publisher<humanoid_interfaces::msg::ImuflagMsg>("/imuflag", 10);
+  // imuflag_publisher_ = this->create_publisher<web_control_bridge::msg::ImuflagMsg>("/imuflag", 10);
   //
   // ============================================================
 
@@ -106,7 +106,7 @@ void ReceiverNode::handle_message()
   RCLCPP_INFO(this->get_logger(), "ID       = %d", data.id);
   if (data.id == 1)
   {
-    humanoid_interfaces::msg::Robot1receiverMsg msg;
+    web_control_bridge::msg::Robot1receiverMsg msg;
     msg.id = data.id;
     msg.yaw = data.yaw;
     msg.roll = data.roll;
@@ -123,7 +123,7 @@ void ReceiverNode::handle_message()
   }
   if (data.id == 2)
   {
-    humanoid_interfaces::msg::Robot2receiverMsg msg;
+    web_control_bridge::msg::Robot2receiverMsg msg;
     msg.id = data.id;
     msg.yaw = data.yaw;
     msg.roll = data.roll;
@@ -140,7 +140,7 @@ void ReceiverNode::handle_message()
   }
   if (data.id == 3)
   {
-    humanoid_interfaces::msg::Robot3receiverMsg msg;
+    web_control_bridge::msg::Robot3receiverMsg msg;
     msg.id = data.id;
     msg.yaw = data.yaw;
     msg.roll = data.roll;
@@ -157,7 +157,7 @@ void ReceiverNode::handle_message()
   }
   if (data.id == 4)
   {
-    humanoid_interfaces::msg::Robot4receiverMsg msg;
+    web_control_bridge::msg::Robot4receiverMsg msg;
     msg.id = data.id;
     msg.yaw = data.yaw;
     msg.roll = data.roll;
@@ -204,7 +204,7 @@ void ReceiverNode::handle_message()
 //   RCLCPP_INFO(this->get_logger(), "set      = %d", data.set);
 //   RCLCPP_INFO(this->get_logger(), "--------------------------------------------");
 
-//   humanoid_interfaces::msg::ImuflagMsg msg;
+//   web_control_bridge::msg::ImuflagMsg msg;
 //   msg.set = data.set;
 //   imuflag_publisher_->publish(msg);
 // }

@@ -6,33 +6,33 @@ SenderNode::SenderNode() : Node("sender_node")
 
   // NUC 전용
   // ===========================================================
-  // imu_sub_ = this->create_subscription<humanoid_interfaces::msg::ImuMsg>(
+  // imu_sub_ = this->create_subscription<web_control_bridge::msg::ImuMsg>(
   //     "Imu", rclcpp::QoS(rclcpp::KeepLast(10)).best_effort(),
   //     std::bind(&SenderNode::imuCallback, this, std::placeholders::_1));
-  // localization_sub_ = this->create_subscription<humanoid_interfaces::msg::Robocuplocalization25>(
+  // localization_sub_ = this->create_subscription<web_control_bridge::msg::Robocuplocalization25>(
   //     "/localization", 10, std::bind(&SenderNode::localizationCallback, this, std::placeholders::_1));
-  // ik_sub_ = this->create_subscription<humanoid_interfaces::msg::IkCoordMsg>(
+  // ik_sub_ = this->create_subscription<web_control_bridge::msg::IkCoordMsg>(
   //     "/ikcoordinate", 10, std::bind(&SenderNode::ikCallback, this, std::placeholders::_1));
-  // vision_sub_ = this->create_subscription<humanoid_interfaces::msg::Robocupvision25>(
+  // vision_sub_ = this->create_subscription<web_control_bridge::msg::Robocupvision25>(
   //     "/vision", 100, std::bind(&SenderNode::visionCallback, this, std::placeholders::_1));
   //
   // ============================================================
 
   // master pc 전용
   // ============================================================
-  robot1sender_sub_ = this->create_subscription<humanoid_interfaces::msg::Robot1senderMsg>(
+  robot1sender_sub_ = this->create_subscription<web_control_bridge::msg::Robot1senderMsg>(
       "/robot1sender", rclcpp::QoS(rclcpp::KeepLast(10)).best_effort(),
       std::bind(&SenderNode::robot1senderCallback, this, std::placeholders::_1));
 
-  robot2sender_sub_ = this->create_subscription<humanoid_interfaces::msg::Robot2senderMsg>(
+  robot2sender_sub_ = this->create_subscription<web_control_bridge::msg::Robot2senderMsg>(
       "/robot2sender", rclcpp::QoS(rclcpp::KeepLast(10)).best_effort(),
       std::bind(&SenderNode::robot2senderCallback, this, std::placeholders::_1));
 
-  robot3sender_sub_ = this->create_subscription<humanoid_interfaces::msg::Robot3senderMsg>(
+  robot3sender_sub_ = this->create_subscription<web_control_bridge::msg::Robot3senderMsg>(
       "/robot3sender", rclcpp::QoS(rclcpp::KeepLast(10)).best_effort(),
       std::bind(&SenderNode::robot3senderCallback, this, std::placeholders::_1));
 
-  robot4sender_sub_ = this->create_subscription<humanoid_interfaces::msg::Robot4senderMsg>(
+  robot4sender_sub_ = this->create_subscription<web_control_bridge::msg::Robot4senderMsg>(
       "/robot4sender", rclcpp::QoS(rclcpp::KeepLast(10)).best_effort(),
       std::bind(&SenderNode::robot4senderCallback, this, std::placeholders::_1));
   //
@@ -46,13 +46,13 @@ SenderNode::~SenderNode()
 
 // NUC 전용
 //  ===========================================================
-// void SenderNode::visionCallback(const humanoid_interfaces::msg::Robocupvision25::SharedPtr msg)
+// void SenderNode::visionCallback(const web_control_bridge::msg::Robocupvision25::SharedPtr msg)
 // {
 //   if (msg->ball_cam_x != 0) ball_flag = 1;
 //   sendMessage("172.100.5.71", 2222);
 // }
 //
-// void SenderNode::ikCallback(const humanoid_interfaces::msg::IkCoordMsg::SharedPtr msg)
+// void SenderNode::ikCallback(const web_control_bridge::msg::IkCoordMsg::SharedPtr msg)
 // {
 //   ikX = msg->x;
 //   ikY = msg->y;
@@ -60,7 +60,7 @@ SenderNode::~SenderNode()
 //   sendMessage("172.100.5.71", 2222);
 // }
 //
-//  void SenderNode::imuCallback(const humanoid_interfaces::msg::ImuMsg::SharedPtr msg)
+//  void SenderNode::imuCallback(const web_control_bridge::msg::ImuMsg::SharedPtr msg)
 //  {
 //    roll = msg->roll;
 //    pitch = msg->pitch;
@@ -69,7 +69,7 @@ SenderNode::~SenderNode()
 //   sendMessage("172.100.5.71", 2222);
 // }
 
-// void SenderNode::localizationCallback(const humanoid_interfaces::msg::Robocuplocalization25::SharedPtr msg)
+// void SenderNode::localizationCallback(const web_control_bridge::msg::Robocuplocalization25::SharedPtr msg)
 // {
 //   robot_x = msg->robot_x;
 //   robot_y = msg->robot_y;
@@ -120,7 +120,7 @@ void SenderNode::sendMessage_master(const QString &receiverIP, quint16 receiverP
   qDebug() << "send";
 }
 
-void SenderNode::robot1senderCallback(const humanoid_interfaces::msg::Robot1senderMsg::SharedPtr msg)
+void SenderNode::robot1senderCallback(const web_control_bridge::msg::Robot1senderMsg::SharedPtr msg)
 {
   // master pc 전용 메시지 처리
   int yaw_set1 = msg->set;
@@ -129,7 +129,7 @@ void SenderNode::robot1senderCallback(const humanoid_interfaces::msg::Robot1send
 
   sendMessage_master("172.100.1.161", 2222, yaw_set1);
 }
-void SenderNode::robot2senderCallback(const humanoid_interfaces::msg::Robot2senderMsg::SharedPtr msg)
+void SenderNode::robot2senderCallback(const web_control_bridge::msg::Robot2senderMsg::SharedPtr msg)
 {
   // master pc 전용 메시지 처리
   int yaw_set2 = msg->set;
@@ -138,7 +138,7 @@ void SenderNode::robot2senderCallback(const humanoid_interfaces::msg::Robot2send
 
   sendMessage_master("172.100.1.161", 2222, yaw_set2);
 }
-void SenderNode::robot3senderCallback(const humanoid_interfaces::msg::Robot3senderMsg::SharedPtr msg)
+void SenderNode::robot3senderCallback(const web_control_bridge::msg::Robot3senderMsg::SharedPtr msg)
 {
   // master pc 전용 메시지 처리
   int yaw_set3 = msg->set;
@@ -147,7 +147,7 @@ void SenderNode::robot3senderCallback(const humanoid_interfaces::msg::Robot3send
 
   sendMessage_master("172.100.1.161", 2222, yaw_set3);
 }
-void SenderNode::robot4senderCallback(const humanoid_interfaces::msg::Robot4senderMsg::SharedPtr msg)
+void SenderNode::robot4senderCallback(const web_control_bridge::msg::Robot4senderMsg::SharedPtr msg)
 {
   // master pc 전용 메시지 처리
   int yaw_set4 = msg->set;
