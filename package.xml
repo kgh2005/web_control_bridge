@@ -11,6 +11,7 @@
 
   <depend>rclcpp</depend>
   <depend>std_msgs</depend>
+  <depend>humanoid_interfaces</depend>
   
   <depend>builtin_interfaces</depend>
   

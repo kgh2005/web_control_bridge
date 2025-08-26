@@ -14,8 +14,8 @@ set(CMAKE_AUTORCC ON)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(humanoid_interfaces REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Core Network)
+find_package(humanoid_interfaces REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
@@ -43,50 +43,93 @@ rosidl_get_typesupport_target(cpp_typesupport_target
 
 include_directories(include)
 
-# ===== Receiver Node =====
-add_executable(receiver src/receiver/receiver.cpp)
-ament_target_dependencies(receiver 
+# ===== Receiver Nuc Node =====
+add_executable(receiver_nuc src/receiver/receiver_nuc.cpp)
+ament_target_dependencies(receiver_nuc 
   rclcpp 
   std_msgs 
-  humanoid_interfaces
 )
 
-set_target_properties(receiver PROPERTIES
+set_target_properties(receiver_nuc PROPERTIES
   AUTOMOC ON
   AUTOUIC ON
   AUTORCC ON
 )
 
-target_link_libraries(receiver
+target_link_libraries(receiver_nuc
   Qt5::Core
   Qt5::Network
   "${cpp_typesupport_target}"
 )
+# ==============================
 
-# ===== Sender Node =====
-add_executable(sender src/sender/sender.cpp)
-ament_target_dependencies(sender 
+# ===== Receiver Master Node =====
+add_executable(receiver_master src/receiver/receiver_master.cpp)
+ament_target_dependencies(receiver_master 
   rclcpp 
   std_msgs 
-  humanoid_interfaces
 )
 
-set_target_properties(sender PROPERTIES
+set_target_properties(receiver_master PROPERTIES
   AUTOMOC ON
   AUTOUIC ON
   AUTORCC ON
 )
 
-target_link_libraries(sender
+target_link_libraries(receiver_master
   Qt5::Core
   Qt5::Network
   "${cpp_typesupport_target}"
 )
+# ==============================
+
+# ===== Sender Nuc Node =====
+add_executable(sender_nuc src/sender/sender_nuc.cpp)
+ament_target_dependencies(sender_nuc 
+  rclcpp 
+  std_msgs 
+  humanoid_interfaces
+)
+
+set_target_properties(sender_nuc PROPERTIES
+  AUTOMOC ON
+  AUTOUIC ON
+  AUTORCC ON
+)
+
+target_link_libraries(sender_nuc
+  Qt5::Core
+  Qt5::Network
+  "${cpp_typesupport_target}"
+)
+# ==============================
+
+# ===== Sender Master Node =====
+add_executable(sender_master src/sender/sender_master.cpp)
+ament_target_dependencies(sender_master 
+  rclcpp 
+  std_msgs 
+)
+
+set_target_properties(sender_master PROPERTIES
+  AUTOMOC ON
+  AUTOUIC ON
+  AUTORCC ON
+)
+
+target_link_libraries(sender_master
+  Qt5::Core
+  Qt5::Network
+  "${cpp_typesupport_target}"
+)
+# ==============================
 
 # ===== Install Targets =====
 install(TARGETS
-  receiver
-  sender
+  receiver_nuc
+  receiver_master
+  sender_nuc
+  sender_master
   DESTINATION lib/${PROJECT_NAME}
 )
 

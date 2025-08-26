@@ -1,6 +1,6 @@
-#include "receiver/receiver.hpp"
+#include "receiver/receiver_master.hpp"
 
-ReceiverNode::ReceiverNode() : Node("receiver_node")
+ReceiverMasterNode::ReceiverMasterNode() : Node("receiver_master_node")
 {
   // master pc 전용
   // ============================================================
@@ -10,12 +10,6 @@ ReceiverNode::ReceiverNode() : Node("receiver_node")
   robot4receiver_publisher_ = this->create_publisher<web_control_bridge::msg::Robot4receiverMsg>("/robot4receiver", 10);
   //
   // =============================================================
-
-  // NUC 전용
-  // ============================================================
-  // imuflag_publisher_ = this->create_publisher<web_control_bridge::msg::ImuflagMsg>("/imuflag", 10);
-  //
-  // ============================================================
 
   // UDP 소켓 생성, AF_INET(IPv4체계 사용), SOCK_DGRAM(UDP 통신 사용)
   sock_fd_ = socket(AF_INET, SOCK_DGRAM, 0);
@@ -43,20 +37,16 @@ ReceiverNode::ReceiverNode() : Node("receiver_node")
   }
 
   // master pc 전용
+  // ============================================================
   // 메세지 처리할 타이머 생성
   timer_ = this->create_wall_timer(
       std::chrono::milliseconds(5),
-      std::bind(&ReceiverNode::handle_message, this));
+      std::bind(&ReceiverMasterNode::handle_message, this));
   //
-
-  // NUC 전용
-  // 메세지 처리할 타이머 생성
-  // timer_nuc_ = this->create_wall_timer(
-  //     std::chrono::milliseconds(5),
-  //     std::bind(&ReceiverNode::handle_nuc_message, this)); // NUC 전용 타이머
+  // ============================================================
 }
 
-ReceiverNode::~ReceiverNode()
+ReceiverMasterNode::~ReceiverMasterNode()
 {
   if (sock_fd_ >= 0)
   {
@@ -67,7 +57,7 @@ ReceiverNode::~ReceiverNode()
 
 // master pc 전용
 // ============================================================
-void ReceiverNode::handle_message()
+void ReceiverMasterNode::handle_message()
 {
   char buffer[sizeof(RobotData)] = {0}; // 정확한 구조체 크기만큼만 받음
   struct sockaddr_in sender_addr;
@@ -176,45 +166,10 @@ void ReceiverNode::handle_message()
 //
 // =============================================================
 
-// NUC 전용
-// ============================================================
-// void ReceiverNode::handle_nuc_message()
-// {
-//   char buffer[sizeof(nuc)] = {0}; // 정확한 구조체 크기만큼만 받음
-//   struct sockaddr_in sender_addr;
-//   socklen_t sender_addr_len = sizeof(sender_addr);
-
-//   ssize_t bytes_received = recvfrom(sock_fd_, buffer, sizeof(buffer), MSG_DONTWAIT,
-//                                     (struct sockaddr *)&sender_addr, &sender_addr_len);
-
-//   if (bytes_received != sizeof(nuc))
-//   {
-//     RCLCPP_WARN(this->get_logger(), "수신 데이터 크기 불일치: %ld bytes", bytes_received);
-//     return;
-//   }
-
-//   std::string sender_ip = inet_ntoa(sender_addr.sin_addr);
-
-//   // 바이너리 데이터를 구조체로 해석
-//   nuc data;
-//   std::memcpy(&data, buffer, sizeof(nuc));
-
-//   RCLCPP_INFO(this->get_logger(), "--------------------------------------------");
-//   RCLCPP_INFO(this->get_logger(), "Received from %s", sender_ip.c_str());
-//   RCLCPP_INFO(this->get_logger(), "set      = %d", data.set);
-//   RCLCPP_INFO(this->get_logger(), "--------------------------------------------");
-
-//   web_control_bridge::msg::ImuflagMsg msg;
-//   msg.set = data.set;
-//   imuflag_publisher_->publish(msg);
-// }
-//
-// =============================================================
-
 int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<ReceiverNode>();
+  auto node = std::make_shared<ReceiverMasterNode>();
 
   rclcpp::spin(node);
 

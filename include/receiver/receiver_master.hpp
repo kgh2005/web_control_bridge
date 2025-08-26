@@ -1,5 +1,5 @@
-#ifndef RECEIVER_HPP
-#define RECEIVER_HPP
+#ifndef RECEIVER_MASTER_HPP
+#define RECEIVER_MASTER_HPP
 
 #include <rclcpp/rclcpp.hpp>
 
@@ -17,9 +17,7 @@
 #include <web_control_bridge/msg/robot2receiver_msg.hpp>
 #include <web_control_bridge/msg/robot3receiver_msg.hpp>
 #include <web_control_bridge/msg/robot4receiver_msg.hpp>
-//
 
-// master pc 전용
 struct RobotData
 {
   int id;
@@ -37,23 +35,11 @@ struct RobotData
 //
 // ===============================================================
 
-
-// NUC 전용
-// ============================================================
-// #include <web_control_bridge/msg/imuflag_msg.hpp>
-
-// struct nuc
-// {
-//   int set;
-// };
-//
-// ============================================================
-
-class ReceiverNode : public rclcpp::Node
+class ReceiverMasterNode : public rclcpp::Node
 {
 public:
-  ReceiverNode();
-  ~ReceiverNode();
+  ReceiverMasterNode();
+  ~ReceiverMasterNode();
 
 private:
   int sock_fd_ = -1;
@@ -69,15 +55,7 @@ private:
   //
   // ============================================================
 
-  // NUC 전용
-  // ============================================================
-  // rclcpp::Publisher<web_control_bridge::msg::ImuflagMsg>::SharedPtr imuflag_publisher_;
-  // rclcpp::TimerBase::SharedPtr timer_nuc_;
-  // void handle_nuc_message();
-  //
-  // ============================================================
-
   // std::map<int, RobotData> data_by_id;
 };
 
-#endif // RECEIVER_HPP
+#endif // RECEIVER_MASTER_HPP
