@@ -4,8 +4,6 @@ SenderNucNode::SenderNucNode() : Node("sender_nuc_node")
 {
   socket = new QUdpSocket();
 
-  // NUC 전용
-  // ===========================================================
   imu_sub_ = this->create_subscription<humanoid_interfaces::msg::ImuMsg>(
       "Imu", rclcpp::QoS(rclcpp::KeepLast(10)).best_effort(),
       std::bind(&SenderNucNode::imuCallback, this, std::placeholders::_1));
@@ -15,8 +13,9 @@ SenderNucNode::SenderNucNode() : Node("sender_nuc_node")
       "/ikcoordinate", 10, std::bind(&SenderNucNode::ikCallback, this, std::placeholders::_1));
   vision_sub_ = this->create_subscription<humanoid_interfaces::msg::Robocupvision25>(
       "/vision", 100, std::bind(&SenderNucNode::visionCallback, this, std::placeholders::_1));
-  //
-  // ============================================================
+
+  get_params();
+  RCLCPP_INFO(this->get_logger(), " master_ip: %s", master_ip_.c_str());
 }
 
 SenderNucNode::~SenderNucNode()
@@ -24,13 +23,19 @@ SenderNucNode::~SenderNucNode()
   delete socket;
 }
 
-// NUC 전용
-//  ===========================================================
+void SenderNucNode::get_params()
+{
+  this->declare_parameter<std::string>("master_ip", "");
+
+  this->get_parameter("master_ip", master_ip_);
+}
+
+
 void SenderNucNode::visionCallback(const humanoid_interfaces::msg::Robocupvision25::SharedPtr msg)
 {
   if (msg->ball_cam_x != 0)
     ball_flag = 1;
-  sendMessage("172.100.5.71", 2222);
+  sendMessage(QString::fromStdString(master_ip_), 2222);
 }
 
 void SenderNucNode::ikCallback(const humanoid_interfaces::msg::IkCoordMsg::SharedPtr msg)
@@ -38,7 +43,7 @@ void SenderNucNode::ikCallback(const humanoid_interfaces::msg::IkCoordMsg::Share
   ikX = msg->x;
   ikY = msg->y;
 
-  sendMessage("172.100.5.71", 2222);
+  sendMessage(QString::fromStdString(master_ip_), 2222);
 }
 
 void SenderNucNode::imuCallback(const humanoid_interfaces::msg::ImuMsg::SharedPtr msg)
@@ -47,7 +52,7 @@ void SenderNucNode::imuCallback(const humanoid_interfaces::msg::ImuMsg::SharedPt
   pitch = msg->pitch;
   yaw = msg->yaw;
 
-  sendMessage("172.100.5.71", 2222);
+  sendMessage(QString::fromStdString(master_ip_), 2222);
 }
 
 void SenderNucNode::localizationCallback(const humanoid_interfaces::msg::Robocuplocalization25::SharedPtr msg)
@@ -57,7 +62,7 @@ void SenderNucNode::localizationCallback(const humanoid_interfaces::msg::Robocup
   ball_x = msg->ball_x;
   ball_y = msg->ball_y;
 
-  sendMessage("172.100.5.71", 2222);
+  sendMessage(QString::fromStdString(master_ip_), 2222);
 }
 
 void SenderNucNode::sendMessage(const QString &receiverIP, quint16 receiverPort)
@@ -75,8 +80,8 @@ void SenderNucNode::sendMessage(const QString &receiverIP, quint16 receiverPort)
   data.ik_y = ikY;
   data.ball_flag = ball_flag;
 
-  RCLCPP_INFO(this->get_logger(), "roll: %.2f, pitch: %.2f, yaw: %.2f, robot_x: %.2f, robot_y: %.2f, ball_x: %.2f, ball_y: %.2f",
-              data.roll, data.pitch, data.yaw, data.robot_x, data.robot_y, data.ball_x, data.ball_y);
+  // RCLCPP_INFO(this->get_logger(), "roll: %.2f, pitch: %.2f, yaw: %.2f, robot_x: %.2f, robot_y: %.2f, ball_x: %.2f, ball_y: %.2f",
+  //             data.roll, data.pitch, data.yaw, data.robot_x, data.robot_y, data.ball_x, data.ball_y);
 
   QByteArray buffer(reinterpret_cast<const char *>(&data), sizeof(RobotData));
   socket->writeDatagram(buffer, QHostAddress(receiverIP), receiverPort);
@@ -84,8 +89,6 @@ void SenderNucNode::sendMessage(const QString &receiverIP, quint16 receiverPort)
   qDebug() << "send";
   ball_flag = 0;
 }
-//
-// ============================================================
 
 int main(int argc, char *argv[])
 {

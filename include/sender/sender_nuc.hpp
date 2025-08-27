@@ -5,9 +5,8 @@
 #include <QUdpSocket>
 #include <QString>
 #include <QDebug>
+#include <string>
 
-// NUC 전용
-// ============================================================
 #include "humanoid_interfaces/msg/imu_msg.hpp"
 #include "humanoid_interfaces/msg/robocuplocalization25.hpp"
 #include "humanoid_interfaces/msg/ik_coord_msg.hpp"
@@ -27,8 +26,6 @@ struct RobotData
   int ik_y;
   int ball_flag;
 };
-//
-// ============================================================
 
 class SenderNucNode : public rclcpp::Node
 {
@@ -37,8 +34,6 @@ public:
   ~SenderNucNode();
 
 private:
-  // NUC 전용
-  // ===========================================================
   double roll = 0.0;
   double pitch = 0.0;
   double yaw = 0.0;
@@ -51,13 +46,10 @@ private:
   int ikY = 0;
   int ball_flag = 0;
 
-  //
-  // ============================================================
-
   QUdpSocket *socket;
 
-  // NUC 전용
-  // ===========================================================
+  std::string master_ip_;
+
   rclcpp::Subscription<humanoid_interfaces::msg::ImuMsg>::SharedPtr imu_sub_;
   rclcpp::Subscription<humanoid_interfaces::msg::Robocuplocalization25>::SharedPtr localization_sub_;
   rclcpp::Subscription<humanoid_interfaces::msg::IkCoordMsg>::SharedPtr ik_sub_;
@@ -67,8 +59,7 @@ private:
   void sendMessage(const QString &receiverIP, quint16 receiverPort);
   void imuCallback(const humanoid_interfaces::msg::ImuMsg::SharedPtr msg);
   void localizationCallback(const humanoid_interfaces::msg::Robocuplocalization25::SharedPtr msg);
-  //
-  // ============================================================
+  void get_params();
 };
 
 #endif // SENDER_NUC_HPP

@@ -4,8 +4,6 @@ SenderMasterNode::SenderMasterNode() : Node("sender_master_node")
 {
   socket = new QUdpSocket();
 
-  // master pc 전용
-  // ============================================================
   robot1sender_sub_ = this->create_subscription<web_control_bridge::msg::Robot1senderMsg>(
       "/robot1sender", rclcpp::QoS(rclcpp::KeepLast(10)).best_effort(),
       std::bind(&SenderMasterNode::robot1senderCallback, this, std::placeholders::_1));
@@ -21,8 +19,12 @@ SenderMasterNode::SenderMasterNode() : Node("sender_master_node")
   robot4sender_sub_ = this->create_subscription<web_control_bridge::msg::Robot4senderMsg>(
       "/robot4sender", rclcpp::QoS(rclcpp::KeepLast(10)).best_effort(),
       std::bind(&SenderMasterNode::robot4senderCallback, this, std::placeholders::_1));
-  //
-  // ============================================================
+
+  get_params();
+  RCLCPP_INFO(this->get_logger(), " robot1_ip: %s", robot1_ip_.c_str());
+  RCLCPP_INFO(this->get_logger(), " robot2_ip: %s", robot2_ip_.c_str());
+  RCLCPP_INFO(this->get_logger(), " robot3_ip: %s", robot3_ip_.c_str());
+  RCLCPP_INFO(this->get_logger(), " robot4_ip: %s", robot4_ip_.c_str());
 }
 
 SenderMasterNode::~SenderMasterNode()
@@ -30,15 +32,22 @@ SenderMasterNode::~SenderMasterNode()
   delete socket;
 }
 
-// master pc 전용
-// ============================================================
-void SenderMasterNode::sendMessage_master(const QString &receiverIP, quint16 receiverPort, int yaw_set)
+void SenderMasterNode::get_params()
 {
-  master msg;
-  msg.set = yaw_set;
-  RCLCPP_INFO(this->get_logger(), "%d", msg.set);
+  this->declare_parameter<std::string>("robot1_ip", "");
+  this->declare_parameter<std::string>("robot2_ip", "");
+  this->declare_parameter<std::string>("robot3_ip", "");
+  this->declare_parameter<std::string>("robot4_ip", "");
 
-  QByteArray buffer(reinterpret_cast<const char *>(&msg), sizeof(master));
+  this->get_parameter("robot1_ip", robot1_ip_);
+  this->get_parameter("robot2_ip", robot2_ip_);
+  this->get_parameter("robot3_ip", robot3_ip_);
+  this->get_parameter("robot4_ip", robot4_ip_);
+}
+
+void SenderMasterNode::sendMessage_master(const QString &receiverIP, quint16 receiverPort)
+{
+  QByteArray buffer(reinterpret_cast<const char *>(&send_msg_), sizeof(master));
   socket->writeDatagram(buffer, QHostAddress(receiverIP), receiverPort);
 
   qDebug() << "send";
@@ -46,42 +55,44 @@ void SenderMasterNode::sendMessage_master(const QString &receiverIP, quint16 rec
 
 void SenderMasterNode::robot1senderCallback(const web_control_bridge::msg::Robot1senderMsg::SharedPtr msg)
 {
-  // master pc 전용 메시지 처리
-  int yaw_set1 = msg->set;
+  send_msg_.set = msg->set;
+  send_msg_.imu = msg->imu;
+  send_msg_.vision = msg->vision;
 
-  RCLCPP_INFO(this->get_logger(), "Received set value: %d", yaw_set1);
+  RCLCPP_INFO(this->get_logger(), "set: %d, imu: %d, vision: %d", send_msg_.set, send_msg_.imu, send_msg_.vision);
 
-  sendMessage_master("172.100.1.161", 2222, yaw_set1);
+  sendMessage_master(QString::fromStdString(robot1_ip_), 2222);
 }
 void SenderMasterNode::robot2senderCallback(const web_control_bridge::msg::Robot2senderMsg::SharedPtr msg)
 {
-  // master pc 전용 메시지 처리
-  int yaw_set2 = msg->set;
+  send_msg_.set = msg->set;
+  send_msg_.imu = msg->imu;
+  send_msg_.vision = msg->vision;
 
-  RCLCPP_INFO(this->get_logger(), "Received set value: %d", yaw_set2);
+  RCLCPP_INFO(this->get_logger(), "set: %d, imu: %d, vision: %d", send_msg_.set, send_msg_.imu, send_msg_.vision);
 
-  sendMessage_master("172.100.1.161", 2222, yaw_set2);
+  sendMessage_master(QString::fromStdString(robot2_ip_), 2222);
 }
 void SenderMasterNode::robot3senderCallback(const web_control_bridge::msg::Robot3senderMsg::SharedPtr msg)
 {
-  // master pc 전용 메시지 처리
-  int yaw_set3 = msg->set;
+  send_msg_.set = msg->set;
+  send_msg_.imu = msg->imu;
+  send_msg_.vision = msg->vision;
 
-  RCLCPP_INFO(this->get_logger(), "Received set value: %d", yaw_set3);
+  RCLCPP_INFO(this->get_logger(), "set: %d, imu: %d, vision: %d", send_msg_.set, send_msg_.imu, send_msg_.vision);
 
-  sendMessage_master("172.100.1.161", 2222, yaw_set3);
+  sendMessage_master(QString::fromStdString(robot3_ip_), 2222);
 }
 void SenderMasterNode::robot4senderCallback(const web_control_bridge::msg::Robot4senderMsg::SharedPtr msg)
 {
-  // master pc 전용 메시지 처리
-  int yaw_set4 = msg->set;
+  send_msg_.set = msg->set;
+  send_msg_.imu = msg->imu;
+  send_msg_.vision = msg->vision;
 
-  RCLCPP_INFO(this->get_logger(), "Received set value: %d", yaw_set4);
+  RCLCPP_INFO(this->get_logger(), "set: %d, imu: %d, vision: %d", send_msg_.set, send_msg_.imu, send_msg_.vision);
 
-  sendMessage_master("172.100.1.161", 2222, yaw_set4);
+  sendMessage_master(QString::fromStdString(robot4_ip_), 2222);
 }
-//
-// ============================================================
 
 int main(int argc, char *argv[])
 {

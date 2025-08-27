@@ -30,6 +30,7 @@ set(msg_files
   "msg/Robot4senderMsg.msg"
 
   "msg/ImuflagMsg.msg"
+  "msg/NodeManagerMsg.msg"
 )
 
 # 인터페이스 생성
@@ -135,12 +136,18 @@ install(TARGETS
 
 install(DIRECTORY
   launch
+  config
   DESTINATION share/${PROJECT_NAME}/
 )
 
 install(DIRECTORY
   include/
   DESTINATION include/
+)
+
+install(PROGRAMS
+  script/node_manager.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 # ===== Lint / Test =====

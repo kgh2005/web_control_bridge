@@ -2,20 +2,8 @@
 
 ReceiverNucNode::ReceiverNucNode() : Node("receiver_nuc_node")
 {
-  // master pc 전용
-  // ============================================================
-  // robot1receiver_publisher_ = this->create_publisher<web_control_bridge::msg::Robot1receiverMsg>("/robot1receiver", 10);
-  // robot2receiver_publisher_ = this->create_publisher<web_control_bridge::msg::Robot2receiverMsg>("/robot2receiver", 10);
-  // robot3receiver_publisher_ = this->create_publisher<web_control_bridge::msg::Robot3receiverMsg>("/robot3receiver", 10);
-  // robot4receiver_publisher_ = this->create_publisher<web_control_bridge::msg::Robot4receiverMsg>("/robot4receiver", 10);
-  //
-  // =============================================================
-
-  // NUC 전용
-  // ============================================================
   imuflag_publisher_ = this->create_publisher<web_control_bridge::msg::ImuflagMsg>("/imuflag", 10);
-  //
-  // ============================================================
+  nodemanager_publisher_ = this->create_publisher<web_control_bridge::msg::NodeManagerMsg>("/nodemanager", 10);
 
   // UDP 소켓 생성, AF_INET(IPv4체계 사용), SOCK_DGRAM(UDP 통신 사용)
   sock_fd_ = socket(AF_INET, SOCK_DGRAM, 0);
@@ -42,13 +30,10 @@ ReceiverNucNode::ReceiverNucNode() : Node("receiver_nuc_node")
     throw std::runtime_error("Socket binding failed");
   }
 
-  // NUC 전용
-  // ============================================================
   // 메세지 처리할 타이머 생성
   timer_nuc_ = this->create_wall_timer(
       std::chrono::milliseconds(5),
       std::bind(&ReceiverNucNode::handle_nuc_message, this)); // NUC 전용 타이머
-  // ============================================================
 }
 
 ReceiverNucNode::~ReceiverNucNode()
@@ -60,8 +45,6 @@ ReceiverNucNode::~ReceiverNucNode()
   }
 }
 
-// NUC 전용
-// ============================================================
 void ReceiverNucNode::handle_nuc_message()
 {
   char buffer[sizeof(nuc)] = {0}; // 정확한 구조체 크기만큼만 받음
@@ -73,7 +56,7 @@ void ReceiverNucNode::handle_nuc_message()
 
   if (bytes_received != sizeof(nuc))
   {
-    RCLCPP_WARN(this->get_logger(), "수신 데이터 크기 불일치: %ld bytes", bytes_received);
+    // RCLCPP_WARN(this->get_logger(), "수신 데이터 크기 불일치: %ld bytes", bytes_received);
     return;
   }
 
@@ -86,14 +69,40 @@ void ReceiverNucNode::handle_nuc_message()
   RCLCPP_INFO(this->get_logger(), "--------------------------------------------");
   RCLCPP_INFO(this->get_logger(), "Received from %s", sender_ip.c_str());
   RCLCPP_INFO(this->get_logger(), "set      = %d", data.set);
+  RCLCPP_INFO(this->get_logger(), "imu      = %d", data.imu);
+  RCLCPP_INFO(this->get_logger(), "vision   = %d", data.vision);
   RCLCPP_INFO(this->get_logger(), "--------------------------------------------");
 
-  web_control_bridge::msg::ImuflagMsg msg;
-  msg.set = data.set;
-  imuflag_publisher_->publish(msg);
+  if (data.set != -1)
+  {
+    msg.set = data.set;
+    imuflag_publisher_->publish(msg);
+  }
+  else if (data.imu == 1)
+  {
+    nm_msg.action = "start";
+    nm_msg.id = 2;
+    nodemanager_publisher_->publish(nm_msg);
+  }
+  else if (data.imu == 0)
+  {
+    nm_msg.action = "stop";
+    nm_msg.id = 2;
+    nodemanager_publisher_->publish(nm_msg);
+  }
+  else if (data.vision == 1)
+  {
+    nm_msg.action = "start";
+    nm_msg.id = 1;
+    nodemanager_publisher_->publish(nm_msg);
+  }
+  else if (data.vision == 0)
+  {
+    nm_msg.action = "stop";
+    nm_msg.id = 1;
+    nodemanager_publisher_->publish(nm_msg);
+  }
 }
-//
-// =============================================================
 
 int main(int argc, char *argv[])
 {
